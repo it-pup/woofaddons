@@ -6,9 +6,9 @@ import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.TextColor
 import pet.itpuppy.woofaddons.utils.Comp
+import pet.itpuppy.woofaddons.utils.Comp.withBold
 
 object ResetLoreCommand : ServerCommand {
     override fun register() {
@@ -32,11 +32,10 @@ object ResetLoreCommand : ServerCommand {
             originalItem.components().get(DataComponents.LORE)
         )
 
-        val message = Component.translatable(
-            "%s %s Reset lore for item %s",
-
-            Comp.PRIVATE_ICON_COMPONENT,
-            Comp.literal("LORE", true),
+        val message = Comp.build(
+            Comp.privateIconComponent,
+            Comp.of(" LORE ").withBold(true),
+            Comp.of("Reset lore for item "),
             heldItem.displayName
         ).withColor(TextColor.GRAY)
 

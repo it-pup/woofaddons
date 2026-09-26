@@ -1,16 +1,15 @@
 package pet.itpuppy.woofaddons.commands
 
 import com.mojang.brigadier.context.CommandContext
-import pet.itpuppy.woofaddons.utils.Comp
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
-import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.TextColor
+import pet.itpuppy.woofaddons.utils.Comp
+import pet.itpuppy.woofaddons.utils.Comp.getUsernameComponent
+import pet.itpuppy.woofaddons.utils.Comp.withBold
 
 object PleadCommand : ServerCommand {
-    private val color = TextColor.fromRgb(0xffe8a3)
-
     override fun register() {
         CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
             dispatcher.register(
@@ -23,12 +22,11 @@ object PleadCommand : ServerCommand {
         val player = ctx.source.player ?: return 0
         val broadcaster = ctx.source.server.playerList
 
-        val message = Component.translatable(
-            "%s %s pleads! \uD83E\uDD7A",
-
-            Comp.literal("PLEAD", true),
-            Comp.buildUsernameComponent(player)
-        ).withColor(color)
+        val message = Comp.build(
+            Comp.of("PLEAD ").withBold(true),
+            player.getUsernameComponent(),
+            Comp.of(" pleads! \uD83E\uDD7A")
+        ).withColor(TextColor.fromRgb(0xffe8a3))
 
         broadcaster.broadcastSystemMessage(message, false)
         return 1

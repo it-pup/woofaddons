@@ -4,9 +4,10 @@ import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
-import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.TextColor
 import pet.itpuppy.woofaddons.utils.Comp
+import pet.itpuppy.woofaddons.utils.Comp.getUsernameComponent
+import pet.itpuppy.woofaddons.utils.Comp.withBold
 
 object CoordsCommand : ServerCommand {
     override fun register() {
@@ -22,26 +23,20 @@ object CoordsCommand : ServerCommand {
         val broadcaster = ctx.source.server.playerList
         val currentDimension = player.level().dimension().identifier().toShortString()
 
-        val positionComponent = Component.translatable(
-            "[%s %s %s]",
-
-            player.blockX,
-            player.blockY,
-            player.blockZ
+        val positionComponent = Comp.of(
+            "[${player.blockX} ${player.blockY} ${player.blockZ}]"
         ).withColor(TextColor.YELLOW)
 
-        val dimensionComponent = Component.translatable(
-            "[%s]",
-
-            parseIdentifierKey(currentDimension)
+        val dimensionComponent = Comp.of(
+            "[${currentDimension.parseIdentifier()}]"
         ).withColor(TextColor.YELLOW)
 
-        val message = Component.translatable(
-            "%s %s is currently at %s in %s",
-
-            Comp.literal("COORD", true),
-            Comp.buildUsernameComponent(player),
+        val message = Comp.build(
+            Comp.of("COORD ").withBold(true),
+            player.getUsernameComponent(),
+            Comp.of(" is currently at "),
             positionComponent,
+            Comp.of(" in "),
             dimensionComponent
         ).withColor(TextColor.GRAY)
 
@@ -49,7 +44,5 @@ object CoordsCommand : ServerCommand {
         return 1
     }
 
-    private fun parseIdentifierKey(key: String): String {
-        return key.split("_").joinToString(" ") { word -> word.replaceFirstChar { it.uppercase() } }
-    }
+    private fun String.parseIdentifier() = this.split("_").joinToString(" ") { word -> word.replaceFirstChar { it.uppercase() } }
 }

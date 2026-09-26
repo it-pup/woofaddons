@@ -8,6 +8,7 @@ import net.minecraft.network.chat.TextColor
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.stats.Stats
 import pet.itpuppy.woofaddons.utils.Comp
+import pet.itpuppy.woofaddons.utils.Comp.getUsernameComponent
 
 object ChatEvent : ServerEvent {
     override fun register() {
@@ -25,16 +26,19 @@ object ChatEvent : ServerEvent {
     fun messageBuilder(player: ServerPlayer, message: PlayerChatMessage): Component {
         val playerDeaths = player.stats.getValue(Stats.CUSTOM.get(Stats.DEATHS)).toString()
 
-        val messageComponent  = message.decoratedContent().copy().withColor(TextColor.WHITE)
-        val deathsComponent   = Component.translatable("[%s]", Comp.literal(playerDeaths, TextColor.YELLOW)).withColor(TextColor.DARK_GRAY)
+        val messageComponent = message.decoratedContent().copy().withColor(TextColor.WHITE)
+        val deathsComponent = Comp.build(
+            Comp.of("["),
+            Comp.of(playerDeaths).withColor(TextColor.YELLOW),
+            Comp.of("] ")
+        ).withColor(TextColor.DARK_GRAY)
 
-        val message = Component.translatable(
-            "%s %s » %s",
-
+        val message = Comp.build(
             deathsComponent,
-            Comp.buildUsernameComponent(player),
+            player.getUsernameComponent(),
+            Comp.of(" » "),
             messageComponent
-        ).withColor(TextColor.GRAY)
+        ).withColor(TextColor.DARK_GRAY)
 
         return message
     }

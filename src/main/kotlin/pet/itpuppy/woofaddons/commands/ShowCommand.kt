@@ -6,12 +6,13 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
 import net.minecraft.commands.SharedSuggestionProvider
-import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.TextColor
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.item.ItemStack
 import pet.itpuppy.woofaddons.utils.Comp
+import pet.itpuppy.woofaddons.utils.Comp.getUsernameComponent
+import pet.itpuppy.woofaddons.utils.Comp.withBold
 
 object ShowCommand : ServerCommand {
     private val shows = listOf("SHOW", "LOOK", "HERE")
@@ -45,12 +46,10 @@ object ShowCommand : ServerCommand {
         val itemStack = type.getter(player)
         val broadcaster = ctx.source.server.playerList
 
-        val message = Component.translatable(
-            "%s %s is %s %s",
-
-            Comp.literal(shows.random(), true),
-            Comp.buildUsernameComponent(player),
-            type.holdingDescription,
+        val message = Comp.build(
+            Comp.of("${shows.random()} ").withBold(true),
+            player.getUsernameComponent(),
+            Comp.of(" is ${type.holdingDescription} "),
             itemStack.displayName
         ).withColor(TextColor.GRAY)
 

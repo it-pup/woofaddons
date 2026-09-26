@@ -11,6 +11,7 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.TextColor
 import net.minecraft.world.item.component.ItemLore
+import pet.itpuppy.woofaddons.utils.Comp.withBold
 
 object LoreCommand : ServerCommand {
     private val color: TextColor = TextColor.fromRgb(0x8a8a8a)
@@ -26,19 +27,17 @@ object LoreCommand : ServerCommand {
 
     override fun onExecuteCommand(ctx: CommandContext<CommandSourceStack>): Int {
         val player = ctx.source.player ?: return 0
-
         val heldItem = player.activeItem
         val lore = StringArgumentType.getString(ctx, "lore")
 
         heldItem.set(DataComponents.LORE, ItemLore(
-            lore.split("\\n").map { Comp.literal(it, color) }
+            lore.split("\\n").map { Comp.of(it).withColor(color) }
         ))
 
-        val message = Component.translatable(
-            "%s %s Applied lore to item %s",
-
-            Comp.PRIVATE_ICON_COMPONENT,
-            Comp.literal("LORE", true),
+        val message = Comp.build(
+            Comp.privateIconComponent,
+            Comp.of(" LORE ").withBold(true),
+            Comp.of("Applied lore to item "),
             heldItem.displayName
         ).withColor(TextColor.GRAY)
 
