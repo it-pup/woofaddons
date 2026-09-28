@@ -17,6 +17,8 @@ object Woofaddons : ModInitializer {
 		LOGGER.info("woof!")
 
         if (FabricLoader.getInstance().environmentType == EnvType.CLIENT) {
+			LOGGER.info("running as client!")
+
 			ServerEvent::class.sealedSubclasses
 				.mapNotNull { it.objectInstance }
 				.forEach { it.register() }
@@ -24,6 +26,8 @@ object Woofaddons : ModInitializer {
 			ServerCommand::class.sealedSubclasses
 				.mapNotNull { it.objectInstance }
 				.forEach { it.register() }
+		} else {
+			LOGGER.info("running as server!")
 		}
 	}
 
