@@ -38,7 +38,7 @@ object ChatEvent : ServerEvent {
             player.getUsernameComponent(),
             Comp.of(" » "),
             messageComponent
-        ).withColor(TextColor.DARK_GRAY)
+        ).withColor(TextColor.GRAY)
 
         return message
     }
